@@ -94,10 +94,7 @@ const Index = () => {
               Магазин игровых товаров по мотивам аниме Наруто
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-naruto-orange hover:bg-naruto-orange/80 text-white px-8 py-4 text-lg font-semibold">
-                <Icon name="ShoppingCart" className="mr-2" />
-                Перейти в магазин
-              </Button>
+              <Button size="lg" className="bg-naruto-orange hover:bg-naruto-orange/80 text-white px-8 py-4 text-lg font-semibold">Корзина</Button>
               <Button size="lg" variant="outline" className="border-naruto-blue text-naruto-blue hover:bg-naruto-blue hover:text-white px-8 py-4 text-lg font-semibold">
                 <Icon name="Download" className="mr-2" />
                 Скачать игру
