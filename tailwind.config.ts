@@ -32,6 +32,15 @@ export default {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
 				},
+				// Naruto-inspired colors
+				naruto: {
+					orange: '#FF6B35',
+					blue: '#1E3A8A',
+					darkBlue: '#0F1928',
+					red: '#DC2626',
+					gold: '#F59E0B',
+					dark: '#1F2937'
+				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
