@@ -237,14 +237,14 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <Tabs defaultValue="characters" className="w-full">
+        <Tabs defaultValue="info" className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-6 mb-8 bg-naruto-dark/50">
+            <TabsTrigger value="info" className="text-sm">ℹ️ Инфо</TabsTrigger>
             <TabsTrigger value="characters" className="text-sm">🎯 Персонажи</TabsTrigger>
             <TabsTrigger value="copies" className="text-sm">📦 Копии</TabsTrigger>
             <TabsTrigger value="resources" className="text-sm">💎 Ресурсы</TabsTrigger>
             <TabsTrigger value="equipment" className="text-sm">🛡 Экипировка</TabsTrigger>
             <TabsTrigger value="custom" className="text-sm">🎨 Кастом</TabsTrigger>
-            <TabsTrigger value="info" className="text-sm">ℹ️ Инфо</TabsTrigger>
           </TabsList>
 
           <TabsContent value="characters" className="space-y-8">
