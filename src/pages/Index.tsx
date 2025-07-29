@@ -2,9 +2,50 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import Icon from "@/components/ui/icon";
+import { useState } from "react";
 
 const Index = () => {
+  const [cartItems, setCartItems] = useState<Array<{id: string, name: string, price: number, quantity: number}>>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const addToCart = (item: {name: string, price: number}) => {
+    const existingItem = cartItems.find(cartItem => cartItem.name === item.name);
+    if (existingItem) {
+      setCartItems(cartItems.map(cartItem => 
+        cartItem.name === item.name 
+          ? {...cartItem, quantity: cartItem.quantity + 1}
+          : cartItem
+      ));
+    } else {
+      setCartItems([...cartItems, {
+        id: Date.now().toString(),
+        name: item.name,
+        price: item.price,
+        quantity: 1
+      }]);
+    }
+  };
+
+  const removeFromCart = (id: string) => {
+    setCartItems(cartItems.filter(item => item.id !== id));
+  };
+
+  const updateQuantity = (id: string, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(id);
+    } else {
+      setCartItems(cartItems.map(item => 
+        item.id === id ? {...item, quantity} : item
+      ));
+    }
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
   const mrCharacters = [
     {
       name: "Наруто MR",
@@ -94,7 +135,97 @@ const Index = () => {
               Магазин игровых товаров по мотивам аниме Наруто
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-naruto-orange hover:bg-naruto-orange/80 text-white px-8 py-4 text-lg font-semibold">Корзина</Button>
+              <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+                <SheetTrigger asChild>
+                  <Button size="lg" className="bg-naruto-orange hover:bg-naruto-orange/80 text-white px-8 py-4 text-lg font-semibold relative">
+                    <Icon name="ShoppingCart" className="mr-2" />
+                    Корзина
+                    {cartItems.length > 0 && (
+                      <Badge className="absolute -top-2 -right-2 bg-naruto-red text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                        {cartItems.reduce((total, item) => total + item.quantity, 0)}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="bg-naruto-dark border-naruto-blue/30 text-white w-[400px] sm:w-[540px]">
+                  <SheetHeader>
+                    <SheetTitle className="text-naruto-orange flex items-center">
+                      <Icon name="ShoppingCart" className="mr-2" />
+                      Корзина покупок
+                    </SheetTitle>
+                    <SheetDescription className="text-gray-300">
+                      {cartItems.length === 0 ? 'Ваша корзина пуста' : `Товаров в корзине: ${cartItems.length}`}
+                    </SheetDescription>
+                  </SheetHeader>
+                  
+                  <div className="mt-6 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+                    {cartItems.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Icon name="ShoppingCart" className="mx-auto mb-4 text-gray-500" size={48} />
+                        <p className="text-gray-400">Начните покупки, чтобы добавить товары в корзину</p>
+                      </div>
+                    ) : (
+                      cartItems.map((item) => (
+                        <Card key={item.id} className="bg-naruto-darkBlue/50 border-naruto-blue/30">
+                          <CardContent className="p-4">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-white">{item.name}</h4>
+                                <p className="text-naruto-gold font-bold">{item.price} ₽</p>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline" 
+                                  className="w-8 h-8 p-0 border-naruto-blue text-naruto-blue hover:bg-naruto-blue hover:text-white"
+                                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                >
+                                  <Icon name="Minus" className="w-4 h-4" />
+                                </Button>
+                                <span className="w-8 text-center text-white font-semibold">{item.quantity}</span>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline" 
+                                  className="w-8 h-8 p-0 border-naruto-blue text-naruto-blue hover:bg-naruto-blue hover:text-white"
+                                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                >
+                                  <Icon name="Plus" className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="destructive" 
+                                  className="ml-2"
+                                  onClick={() => removeFromCart(item.id)}
+                                >
+                                  <Icon name="Trash2" className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="mt-2 text-right">
+                              <span className="text-sm text-gray-400">Итого: </span>
+                              <span className="text-naruto-gold font-bold">{item.price * item.quantity} ₽</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                  
+                  {cartItems.length > 0 && (
+                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-naruto-dark border-t border-naruto-blue/30">
+                      <Separator className="mb-4" />
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="text-lg font-semibold text-white">Общая сумма:</span>
+                        <span className="text-2xl font-bold text-naruto-gold">{getTotalPrice()} ₽</span>
+                      </div>
+                      <Button className="w-full bg-naruto-orange hover:bg-naruto-orange/80 text-white font-semibold py-3">
+                        <Icon name="CreditCard" className="mr-2" />
+                        Оформить заказ
+                      </Button>
+                    </div>
+                  )}
+                </SheetContent>
+              </Sheet>
               <Button size="lg" variant="outline" className="border-naruto-blue text-naruto-blue hover:bg-naruto-blue hover:text-white px-8 py-4 text-lg font-semibold">
                 <Icon name="Download" className="mr-2" />
                 Скачать игру
@@ -139,7 +270,10 @@ const Index = () => {
                           </div>
                         ))}
                       </div>
-                      <Button className="w-full mt-4 bg-naruto-orange hover:bg-naruto-orange/80">
+                      <Button 
+                        className="w-full mt-4 bg-naruto-orange hover:bg-naruto-orange/80"
+                        onClick={() => addToCart({name: `${character.name} 50★`, price: Object.values(character.prices)[0] as number})}
+                      >
                         Купить
                       </Button>
                     </CardContent>
